@@ -2,4 +2,61 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: 16px;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+}
+
+.container {
+  flex: 1;
+  width: 40vw;
+  height: 60vw;
+  min-width: 320px;
+  min-height: 480px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.container header {
+  flex: 1;
+}
+.container main {
+  flex: 4;
+}
+.container footer {
+  flex: 1;
+  display: flex;
+  width: 100%;
+}
+.container footer .board--length, .container footer .board--speed, .container footer .board--time {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+}
+
+#map {
+  width: 100%;
+  height: 60vw;
+  background-color: red;
+  border: 3px solid black;
+  display: grid;
+  grid-template-columns: repeat(30, 1fr);
+  grid-template-rows: repeat(60, 1fr);
+}
+
+#snake--head {
+  width: 100%;
+  height: 100%;
+  background-color: yellow;
 }
