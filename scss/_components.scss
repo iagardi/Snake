@@ -11,8 +11,8 @@ h1 {
    background-color: red;
    border: 3px solid black;
    display: grid;
-   grid-template-columns: repeat(30, 1fr);
-   grid-template-rows: repeat(60, 1fr);
+   grid-template-columns: repeat(20, 1fr);
+   grid-template-rows: repeat(40, 1fr);
 }
 
 #snake--head {
