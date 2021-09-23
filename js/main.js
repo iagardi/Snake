@@ -5,6 +5,15 @@ const speedCounter = document.querySelector("#speed")
 const minuteCounter = document.querySelector("#timer--minutes")
 const secondsCounter = document.querySelector("#timer--seconds")
 
+// Main, elapsed timer. Increases game speed at certain intervals
+let timer
+
+// Game speed timer, made dynamic with a second function. Courtesy of stack overflow
+let play
+
+// a second function for the "game speed" timer, to restart each time with the current game speed
+let playTimer
+
 const snakeBob = []
 const positionTaken = []
 let fruitSpot = ""
@@ -21,11 +30,14 @@ const head = {
    column: 0,
    prevRow: 0,
    prevCol: 0,
+   prevSpot: [],
    direction: "",
    // to get a random start position within the grid
    startPosition() {
       this.row = Math.floor(Math.random() * Number(this.gridRows)) + 1
       this.column = Math.floor(Math.random() * Number(this.gridColumns)) + 1
+      this.prevRow = this.row
+      this.prevCol = this.column - 1
       this.positionSnake()
    },
    startGame() {
@@ -42,6 +54,7 @@ const head = {
 
       play = setTimeout(() => {
          head.positionSnake()
+         head.moveBob()
          head.updatePosition()
          playTimer()
       }, head.speed)
@@ -49,6 +62,7 @@ const head = {
       playTimer = function () {
          play = setTimeout(() => {
             head.positionSnake()
+            head.moveBob()
             head.updatePosition()
             playTimer()
          }, head.speed)
@@ -79,6 +93,8 @@ const head = {
          case "up":
             this.prevRow = this.row
             this.prevCol = this.column
+            this.prevSpot[0] = this.row
+            this.prevSpot[1] = this.column
             this.row--
             snakeHead.style.gridRow = this.row
             snakeHead.style.gridColumn = this.column
@@ -86,6 +102,8 @@ const head = {
          case "down":
             this.prevRow = this.row
             this.prevCol = this.column
+            this.prevSpot[0] = this.row
+            this.prevSpot[1] = this.column
             this.row++
             snakeHead.style.gridRow = this.row
             snakeHead.style.gridColumn = this.column
@@ -93,6 +111,8 @@ const head = {
          case "left":
             this.prevRow = this.row
             this.prevCol = this.column
+            this.prevSpot[0] = this.row
+            this.prevSpot[1] = this.column
             this.column--
             snakeHead.style.gridRow = this.row
             snakeHead.style.gridColumn = this.column
@@ -100,6 +120,8 @@ const head = {
          case "right":
             this.prevRow = this.row
             this.prevCol = this.column
+            this.prevSpot[0] = this.row
+            this.prevSpot[1] = this.column
             this.column++
             snakeHead.style.gridRow = this.row
             snakeHead.style.gridColumn = this.column
@@ -116,7 +138,7 @@ const head = {
          const currentFruit = document.querySelector(".fruit")
          currentFruit.remove()
       }
-      // check if Bob is out of the map
+      // check if Bob is hitting the walls
       if (this.row < 1 || this.row > 30 || this.column < 1 || this.column > 30) {
          this.gameOver()
       }
@@ -124,11 +146,10 @@ const head = {
    updatePosition() {
       const currentPosition = `${this.row}:${this.column}`
       positionTaken.push(currentPosition)
-      console.log(positionTaken)
+      console.log(currentPosition)
 
    },
    gameOver() {
-      clearInterval(timer, playTimer, play)
       alert("SUXXXX")
       play = ""
       timer = ""
@@ -173,6 +194,14 @@ const head = {
       newTailPiece.style.gridRow = `${snakeTail[bobAteAFruit.length-1].row}`
       newTailPiece.style.gridCol = `${snakeTail[bobAteAFruit.length-1].column}`
       map.appendChild(newTailPiece)
+   },
+   moveBob() {
+      snakeBob.forEach(snake => {
+         if (snake.hasOwnProperty('calcPosition') && snake.hasOwnProperty('moveTail')) {
+            snake.calcPosition()
+            snake.moveTail()
+         }
+      })
    }
 }
 
@@ -191,21 +220,11 @@ class Growsnake {
    }
    // methods here
 }
-
-// Main, elapsed timer. Increases game speed at certain intervals
-let timer
-
-// Game speed timer, made dynamic with a second function. Courtesy of stack overflow
-let play
-
-// a second function for the "game speed" timer, to restart each time with the current game speed
-let playTimer
-
 // After loading page, starts the game and sets direction. Any further keydown just changes the current direction. Need bugfixing
 window.addEventListener("keydown", event => {
    switch (event.key) {
       case "ArrowUp":
-         if (head.seconds == 0 && head.direction) {
+         if (head.seconds == 0 && head.direction == "") {
             head.direction = "up"
             head.startGame()
          } else {
@@ -213,7 +232,7 @@ window.addEventListener("keydown", event => {
          }
          break
       case "ArrowDown":
-         if (head.seconds == 0 && head.direction) {
+         if (head.seconds == 0 && head.direction == "") {
             head.direction = "down"
             head.startGame()
          } else {
@@ -221,7 +240,7 @@ window.addEventListener("keydown", event => {
          }
          break
       case "ArrowLeft":
-         if (head.seconds == 0 && head.direction) {
+         if (head.seconds == 0 && head.direction == "") {
             head.direction = "left"
             head.startGame()
          } else {
@@ -229,7 +248,7 @@ window.addEventListener("keydown", event => {
          }
          break
       case "ArrowRight":
-         if (head.seconds == 0 && head.direction) {
+         if (head.seconds == 0 && head.direction == "") {
             head.direction = "right"
             head.startGame()
          } else {
@@ -238,3 +257,59 @@ window.addEventListener("keydown", event => {
          break
    }
 })
+
+// --------------------------------------------
+// hard coding in a few tail pieces to test movement
+
+const snakeOne = document.createElement("div")
+snakeOne.classList.add("tail")
+
+
+const snake1 = {
+   length: 2, // to be generated from the length stored in head obj
+   row: 0, // to be generated from previous piece
+   column: 0, // to be generated from previous piece
+   prevRow: 0, // calculated internally after movement
+   prevCol: 0, // calculated internally after movement
+   prevSpot: [],
+   calcPosition() {
+      const myPos = this.length - 1
+      this.row = snakeBob[myPos - 1].prevSpot[0]
+      this.column = snakeBob[myPos - 1].prevSpot[1]
+      console.log(`snake1 is at ${this.row}:${this.column}`)
+   },
+   moveTail() {
+      snakeOne.style.gridRows = this.row
+      snakeOne.style.gridColumn = this.column
+      this.prevSpot[0] = this.row
+      this.prevSpot[1] = this.column
+   }
+}
+
+const snakeTwo = document.createElement("div")
+snakeTwo.classList.add("tail2")
+
+
+const snake2 = {
+   length: 3, // to be generated from the length stored in head obj
+   row: 0, // to be generated from previous piece
+   column: 0, // to be generated from previous piece
+   prevRow: 0, // calculated internally after movement
+   prevCol: 0, // calculated internally after movement
+   prevSpot: [],
+   calcPosition() {
+      const myPos = this.length - 1
+      this.row = snakeBob[myPos - 1].prevSpot[0]
+      this.column = snakeBob[myPos - 1].prevSpot[1]
+      console.log(`snake2 is at ${this.row}:${this.column}`)
+   },
+   moveTail() {
+      snakeOne.style.gridRows = this.row
+      snakeOne.style.gridColumn = this.column
+      this.prevSpot[0] = this.row
+      this.prevSpot[1] = this.column
+   }
+}
+
+snakeBob.push(head, snake1, snake2)
+map.appendChild(snakeOne)
