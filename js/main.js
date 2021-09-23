@@ -5,11 +5,13 @@ const speedCounter = document.querySelector("#speed")
 const minuteCounter = document.querySelector("#timer--minutes")
 const secondsCounter = document.querySelector("#timer--seconds")
 
-const snakeLength = []
+const snakeBob = []
+const positionTaken = []
+let fruitSpot = ""
 
-const basic = {
-   gridRows: 40,
-   gridColumns: 20,
+const head = {
+   gridRows: 30,
+   gridColumns: 30,
    length: 1,
    seconds: 00,
    minutes: 0,
@@ -17,12 +19,40 @@ const basic = {
    speedDisplay: 1, // for external display only
    row: 0,
    column: 0,
+   prevRow: 0,
+   prevCol: 0,
    direction: "",
    // to get a random start position within the grid
    startPosition() {
       this.row = Math.floor(Math.random() * Number(this.gridRows)) + 1
       this.column = Math.floor(Math.random() * Number(this.gridColumns)) + 1
       this.positionSnake()
+   },
+   startGame() {
+      timer = setInterval(seconds => {
+         head.seconds++
+         head.updateSeconds()
+         head.updateMinutes()
+         if (head.seconds % 10 == 0) {
+            head.speed = head.speed - 100
+            head.speedDisplay++
+            head.updateSpeed()
+         }
+      }, 1000)
+
+      play = setTimeout(() => {
+         head.positionSnake()
+         head.updatePosition()
+         playTimer()
+      }, head.speed)
+
+      playTimer = function () {
+         play = setTimeout(() => {
+            head.positionSnake()
+            head.updatePosition()
+            playTimer()
+         }, head.speed)
+      }
    },
    updateLength() {
       lengthCounter.innerHTML = this.length
@@ -47,134 +77,163 @@ const basic = {
    positionSnake() { // position the snake at each interval based on the current direction
       switch (this.direction) {
          case "up":
+            this.prevRow = this.row
+            this.prevCol = this.column
             this.row--
             snakeHead.style.gridRow = this.row
             snakeHead.style.gridColumn = this.column
             break
          case "down":
+            this.prevRow = this.row
+            this.prevCol = this.column
             this.row++
             snakeHead.style.gridRow = this.row
             snakeHead.style.gridColumn = this.column
             break
          case "left":
+            this.prevRow = this.row
+            this.prevCol = this.column
             this.column--
             snakeHead.style.gridRow = this.row
             snakeHead.style.gridColumn = this.column
             break
          case "right":
+            this.prevRow = this.row
+            this.prevCol = this.column
             this.column++
             snakeHead.style.gridRow = this.row
             snakeHead.style.gridColumn = this.column
             break
          default:
-            snakeHead.style.gridRow = basic.row
-            snakeHead.style.gridColumn = basic.column
+            snakeHead.style.gridRow = head.row
+            snakeHead.style.gridColumn = head.column
+      }
+      const currentPosition = `${this.row}:${this.column}`
+      if (currentPosition == fruitSpot) {
+         this.length++
+         this.updateLength()
+         this.createFruit()
+         const currentFruit = document.querySelector(".fruit")
+         currentFruit.remove()
       }
       // check if Bob is out of the map
-      if (this.row < 0 || this.row > 40 || this.column < 0 || this.column > 20) {
+      if (this.row < 1 || this.row > 30 || this.column < 1 || this.column > 30) {
          this.gameOver()
       }
    },
-   playTimer() { // a second function for the "game speed" timer, to restart each time with the current game speed
-      clearInterval(play)
-      counter = basic.speed
-      play = setInterval(() => {
-         console.log("1")
-         basic.positionSnake()
-         basic.playTimer()
-      }, counter)
+   updatePosition() {
+      const currentPosition = `${this.row}:${this.column}`
+      positionTaken.push(currentPosition)
+      console.log(positionTaken)
+
    },
    gameOver() {
-      clearInterval(timer, this.playTimer)
+      clearInterval(timer, playTimer, play)
       alert("SUXXXX")
+      play = ""
+      timer = ""
+      playTimer = ""
       this.row = Math.floor(this.gridRow / 2)
       this.column = Math.floor(this.gridColumn / 2)
+      this.positionSnake()
+      this.reset()
+   },
+   reset() {
+      this.length = 1,
+         this.seconds = 0,
+         this.minutes = 0,
+         this.speed = 500,
+         this.speedDisplay = 1,
+         this.row = 0,
+         this.column = 0,
+         this.direction = ""
+      timer = ""
+      play = ""
+      playTimer = ""
       this.startPosition()
+   },
+   createFruit() {
+      const row = Math.floor(Math.random() * Number(this.gridRows)) + 1
+      const column = Math.floor(Math.random() * Number(this.gridColumns)) + 1
+      const newFruit = document.createElement("div")
+      console.log(`New fruit should be at ${row}:${column}`)
+      newFruit.style.gridRow = `${row}`
+      newFruit.style.gridColumn = `${column}`
+      newFruit.classList.add("fruit")
+      map.appendChild(newFruit)
+      fruitSpot = `${row}:${column}`
+      console.log(fruitSpot)
+   },
+   addTail() {
+      const bobAteAFruit = new Growsnake(head.prevRow,
+         head.prevCol, head.length, 0, 0)
+      snakeTail.push(bobAteAFruit)
+      const newTailPiece = document.createElement("div")
+      newTailPiece.classList.add("tail")
+      newTailPiece.style.gridRow = `${snakeTail[bobAteAFruit.length-1].row}`
+      newTailPiece.style.gridCol = `${snakeTail[bobAteAFruit.length-1].column}`
+      map.appendChild(newTailPiece)
    }
 }
 
-// initialize Bob's head at start
-basic.startPosition()
+// initialize Bob's head at start 
+head.startPosition()
+head.createFruit()
 
 // constructor class to grow Bob
-class Snake {
-   constructor(row, column, length) {
-      this.row = basic.row,
-         this.column = basic.column,
-         this.length = basic.length
+class Growsnake {
+   constructor(row, column, length, prevRow, prevCol) {
+      this.row = head.prevRow,
+         this.column = head.prevCol,
+         this.length = head.length
+
+
    }
+   // methods here
 }
 
 // Main, elapsed timer. Increases game speed at certain intervals
-const timer = () => setInterval(seconds => {
-   basic.seconds++
-   basic.updateSeconds()
-   basic.updateMinutes()
-   if (basic.seconds % 10 == 0) {
-      basic.speed = basic.speed - 100
-      basic.speedDisplay++
-      basic.updateSpeed()
-   }
-}, 1000)
+let timer
 
 // Game speed timer, made dynamic with a second function. Courtesy of stack overflow
 let play
 
+// a second function for the "game speed" timer, to restart each time with the current game speed
+let playTimer
 
 // After loading page, starts the game and sets direction. Any further keydown just changes the current direction. Need bugfixing
 window.addEventListener("keydown", event => {
    switch (event.key) {
       case "ArrowUp":
-         if (basic.seconds == 0 || !basic.direction) {
-            timer()
-            // Game speed timer, made dynamic with a second function. Courtesy of stack overflow
-            play = setInterval(() => {
-               console.log("1")
-               basic.positionSnake()
-               basic.playTimer()
-            }, basic.speed)
-            basic.direction = "up"
+         if (head.seconds == 0 && head.direction) {
+            head.direction = "up"
+            head.startGame()
          } else {
-            basic.direction = "up"
+            head.direction = "up"
          }
          break
       case "ArrowDown":
-         if (basic.seconds == 0 || !basic.direction) {
-            timer()
-            play = setInterval(() => {
-               console.log("1")
-               basic.positionSnake()
-               basic.playTimer()
-            }, basic.speed)
-            basic.direction = "down"
+         if (head.seconds == 0 && head.direction) {
+            head.direction = "down"
+            head.startGame()
          } else {
-            basic.direction = "down"
+            head.direction = "down"
          }
          break
       case "ArrowLeft":
-         if (basic.seconds == 0 || !basic.direction) {
-            timer()
-            play = setInterval(() => {
-               console.log("1")
-               basic.positionSnake()
-               basic.playTimer()
-            }, basic.speed)
-            basic.direction = "left"
+         if (head.seconds == 0 && head.direction) {
+            head.direction = "left"
+            head.startGame()
          } else {
-            basic.direction = "left"
+            head.direction = "left"
          }
          break
       case "ArrowRight":
-         if (basic.seconds == 0 || !basic.direction) {
-            timer()
-            play = setInterval(() => {
-               console.log("1")
-               basic.positionSnake()
-               basic.playTimer()
-            }, basic.speed)
-            basic.direction = "right"
+         if (head.seconds == 0 && head.direction) {
+            head.direction = "right"
+            head.startGame()
          } else {
-            basic.direction = "right"
+            head.direction = "right"
          }
          break
    }
