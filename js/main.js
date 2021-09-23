@@ -19,12 +19,12 @@ const positionTaken = []
 let fruitSpot = ""
 
 const head = {
-   gridRows: 30,
-   gridColumns: 30,
+   gridDepth: 30,
+   gridWidth: 30,
    length: 1,
    seconds: 00,
    minutes: 0,
-   speed: 500, // movement speed, in milliseconds
+   speed: 1500, // movement speed, in milliseconds
    speedDisplay: 1, // for external display only
    row: 0,
    column: 0,
@@ -34,11 +34,12 @@ const head = {
    direction: "",
    // to get a random start position within the grid
    startPosition() {
-      this.row = Math.floor(Math.random() * Number(this.gridRows)) + 1
-      this.column = Math.floor(Math.random() * Number(this.gridColumns)) + 1
-      this.prevRow = this.row
-      this.prevCol = this.column - 1
+      this.row = Math.floor(Math.random() * Number(this.gridDepth)) + 1
+      this.column = Math.floor(Math.random() * Number(this.gridWidth)) + 1
+      this.prevSpot[0] = this.row
+      this.prevSpot[1] = this.column - 1
       this.positionSnake()
+      console.log(`Bob's head starts at ${this.row}:${this.column}`)
    },
    startGame() {
       timer = setInterval(seconds => {
@@ -146,7 +147,7 @@ const head = {
    updatePosition() {
       const currentPosition = `${this.row}:${this.column}`
       positionTaken.push(currentPosition)
-      console.log(currentPosition)
+      console.log(`Bob's head is at ${currentPosition}`)
 
    },
    gameOver() {
@@ -174,8 +175,8 @@ const head = {
       this.startPosition()
    },
    createFruit() {
-      const row = Math.floor(Math.random() * Number(this.gridRows)) + 1
-      const column = Math.floor(Math.random() * Number(this.gridColumns)) + 1
+      const row = Math.floor(Math.random() * Number(this.gridDepth)) + 1
+      const column = Math.floor(Math.random() * Number(this.gridWidth)) + 1
       const newFruit = document.createElement("div")
       console.log(`New fruit should be at ${row}:${column}`)
       newFruit.style.gridRow = `${row}`
@@ -183,7 +184,6 @@ const head = {
       newFruit.classList.add("fruit")
       map.appendChild(newFruit)
       fruitSpot = `${row}:${column}`
-      console.log(fruitSpot)
    },
    addTail() {
       const bobAteAFruit = new Growsnake(head.prevRow,
@@ -191,36 +191,87 @@ const head = {
       snakeTail.push(bobAteAFruit)
       const newTailPiece = document.createElement("div")
       newTailPiece.classList.add("tail")
-      newTailPiece.style.gridRow = `${snakeTail[bobAteAFruit.length-1].row}`
-      newTailPiece.style.gridCol = `${snakeTail[bobAteAFruit.length-1].column}`
+      newTailPiece.style.gridRow = `
+               $ {
+                  snakeTail[bobAteAFruit.length - 1].row
+               }
+               `
+      newTailPiece.style.gridCol = `
+               $ {
+                  snakeTail[bobAteAFruit.length - 1].column
+               }
+               `
       map.appendChild(newTailPiece)
    },
    moveBob() {
-      snakeBob.forEach(snake => {
-         if (snake.hasOwnProperty('calcPosition') && snake.hasOwnProperty('moveTail')) {
-            snake.calcPosition()
-            snake.moveTail()
-         }
-      })
+      for (i = 1; i < snakeBob.length; i++) {
+         snakeBob[i].calcPosition()
+         snakeBob[i].moveTail()
+      }
    }
 }
+
+// --------------------------------------------
+// hard coding in a few tail pieces to test movement
+
+const snakeOne = document.createElement("div")
+snakeOne.classList.add("tail")
+
+
+const snake1 = {
+   length: 2, // to be generated from the length stored in head obj
+   row: 0, // to be generated from previous piece
+   column: 0, // to be generated from previous piece
+   prevSpot: [], // calculated internally after movement
+   calcPosition() {
+      const myPos = this.length - 1
+      this.row = snakeBob[myPos - 1].prevSpot[0]
+      this.column = snakeBob[myPos - 1].prevSpot[1]
+      console.log(`snake1 is at ${this.row}:${this.column}`)
+   },
+   moveTail() {
+      snakeOne.style.gridRow = this.row
+      snakeOne.style.gridColumn = this.column
+      this.prevSpot[0] = this.row
+      this.prevSpot[1] = this.column
+   }
+}
+
+const snakeTwo = document.createElement("div")
+snakeTwo.classList.add("tail2")
+
+
+const snake2 = {
+   length: 3, // to be generated from the length stored in head obj
+   row: 0, // to be generated from previous piece
+   column: 0, // to be generated from previous piece
+   prevSpot: [],
+   calcPosition() {
+      const myPos = this.length - 1
+      this.row = snakeBob[myPos - 1].prevSpot[0]
+      this.column = snakeBob[myPos - 1].prevSpot[1]
+      console.log(`snake2 is at ${this.row}:${this.column}`)
+   },
+   moveTail() {
+      snakeTwo.style.gridRow = this.row
+      snakeTwo.style.gridColumn = this.column
+      this.prevSpot[0] = this.row
+      this.prevSpot[1] = this.column
+   }
+}
+
+snakeBob.push(head, snake1, snake2)
+map.appendChild(snakeOne)
+map.appendChild(snakeTwo)
 
 // initialize Bob's head at start 
 head.startPosition()
 head.createFruit()
-
-// constructor class to grow Bob
-class Growsnake {
-   constructor(row, column, length, prevRow, prevCol) {
-      this.row = head.prevRow,
-         this.column = head.prevCol,
-         this.length = head.length
+head.moveBob()
 
 
-   }
-   // methods here
-}
-// After loading page, starts the game and sets direction. Any further keydown just changes the current direction. Need bugfixing
+
+// After loading the page, start the game and set direction. Any further keydown just changes the current direction. Need bugfixing
 window.addEventListener("keydown", event => {
    switch (event.key) {
       case "ArrowUp":
@@ -255,61 +306,28 @@ window.addEventListener("keydown", event => {
             head.direction = "right"
          }
          break
+
    }
 })
 
-// --------------------------------------------
-// hard coding in a few tail pieces to test movement
+window.addEventListener("keypress", event => {
+   switch (event.key) {
+      case "p":
+         timer = ""
+         play = ""
+         playTimer = ""
+   }
+})
 
-const snakeOne = document.createElement("div")
-snakeOne.classList.add("tail")
 
 
-const snake1 = {
-   length: 2, // to be generated from the length stored in head obj
-   row: 0, // to be generated from previous piece
-   column: 0, // to be generated from previous piece
-   prevRow: 0, // calculated internally after movement
-   prevCol: 0, // calculated internally after movement
-   prevSpot: [],
-   calcPosition() {
-      const myPos = this.length - 1
-      this.row = snakeBob[myPos - 1].prevSpot[0]
-      this.column = snakeBob[myPos - 1].prevSpot[1]
-      console.log(`snake1 is at ${this.row}:${this.column}`)
-   },
-   moveTail() {
-      snakeOne.style.gridRows = this.row
-      snakeOne.style.gridColumn = this.column
-      this.prevSpot[0] = this.row
-      this.prevSpot[1] = this.column
+// constructor class to grow Bob
+class Growsnake {
+   constructor(row, column, length, prevRow, prevCol) {
+      this.row = head.prevRow,
+         this.column = head.prevCol,
+         this.length = head.length
+
+
    }
 }
-
-const snakeTwo = document.createElement("div")
-snakeTwo.classList.add("tail2")
-
-
-const snake2 = {
-   length: 3, // to be generated from the length stored in head obj
-   row: 0, // to be generated from previous piece
-   column: 0, // to be generated from previous piece
-   prevRow: 0, // calculated internally after movement
-   prevCol: 0, // calculated internally after movement
-   prevSpot: [],
-   calcPosition() {
-      const myPos = this.length - 1
-      this.row = snakeBob[myPos - 1].prevSpot[0]
-      this.column = snakeBob[myPos - 1].prevSpot[1]
-      console.log(`snake2 is at ${this.row}:${this.column}`)
-   },
-   moveTail() {
-      snakeOne.style.gridRows = this.row
-      snakeOne.style.gridColumn = this.column
-      this.prevSpot[0] = this.row
-      this.prevSpot[1] = this.column
-   }
-}
-
-snakeBob.push(head, snake1, snake2)
-map.appendChild(snakeOne)
