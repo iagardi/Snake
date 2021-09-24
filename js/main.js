@@ -53,14 +53,7 @@ const head = {
          }
       }, 1000)
 
-      play = setTimeout(() => {
-         head.positionSnake()
-         head.moveBob()
-         head.updatePosition()
-         playTimer()
-      }, head.speed)
-
-      playTimer = function () {
+      playTimer = () => {
          play = setTimeout(() => {
             head.positionSnake()
             head.moveBob()
@@ -68,6 +61,14 @@ const head = {
             playTimer()
          }, head.speed)
       }
+      play = setTimeout(() => {
+         head.positionSnake()
+         head.moveBob()
+         head.updatePosition()
+         playTimer()
+      }, head.speed)
+
+
    },
    updateLength() {
       lengthCounter.innerHTML = this.length
@@ -142,6 +143,11 @@ const head = {
       if (snakeBob.length > 1) {
          positionTaken.push(currentPosition)
       }
+      positionTaken.forEach(pos => {
+         if (pos == currentPosition) {
+            this.gameOver()
+         }
+      })
       console.log(`Bob's head is at ${currentPosition}`)
 
    },
@@ -300,22 +306,49 @@ const snake4 = {
       this.prevSpot[1] = this.column
       console.log(`snake4 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
       console.log("--------------------------------------------------")
+      const index = this.length - 1
+      const position = `${this.row}:${this.column}`
+      if (positionTaken[index] == position) {
+         positionTaken.pop()
+      }
    }
 }
 
-snakeBob.push(head, snake1, snake2, snake3, snake4)
+const snakeFive = document.createElement("div")
+snakeFive.classList.add("tail5")
+
+const snake5 = {
+   length: 6, // to be generated from the length stored in head obj
+   row: 0, // to be generated from previous piece
+   column: 0, // to be generated from previous piece
+   prevSpot: [],
+   calcPosition() {
+      const index = this.length - 1
+      this.row = snakeBob[index - 1].prevSpot[0]
+      this.column = snakeBob[index - 1].prevSpot[1]
+      console.log(`snake4 is at ${this.row}:${this.column}`)
+   },
+   moveTail() {
+      snakeFive.style.gridRow = this.row
+      snakeFive.style.gridColumn = this.column
+      this.prevSpot[0] = this.row
+      this.prevSpot[1] = this.column
+      console.log(`snake5 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
+      console.log("--------------------------------------------------")
+   }
+}
+
+snakeBob.push(head, snake1, snake2, snake3, snake4, snake5)
 map.appendChild(snakeOne)
 map.appendChild(snakeTwo)
 map.appendChild(snakeThree)
 map.appendChild(snakeFour)
+map.appendChild(snakeFive)
 
 
 // initialize Bob's head at start 
 head.startPosition()
 head.createFruit()
-head.moveBob()
-head.moveBob()
-head.moveBob()
 head.moveBob()
 
 
