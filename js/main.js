@@ -304,7 +304,10 @@ const snake4 = {
 }
 
 snakeBob.push(head, snake1, snake2, snake3, snake4)
-map.appendChild(snakeOne, snakeTwo, snakeThree, snakeFour)
+map.appendChild(snakeOne)
+map.appendChild(snakeTwo)
+map.appendChild(snakeThree)
+map.appendChild(snakeFour)
 
 
 // initialize Bob's head at start 
