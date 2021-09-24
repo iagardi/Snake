@@ -19,8 +19,8 @@ const positionTaken = []
 let fruitSpot = ""
 
 const head = {
-   gridDepth: 30,
-   gridWidth: 30,
+   gridDepth: 20,
+   gridWidth: 20,
    length: 1,
    seconds: 00,
    minutes: 0,
@@ -92,8 +92,6 @@ const head = {
    positionSnake() { // position the snake at each interval based on the current direction
       switch (this.direction) {
          case "up":
-            this.prevRow = this.row
-            this.prevCol = this.column
             this.prevSpot[0] = this.row
             this.prevSpot[1] = this.column
             this.row--
@@ -101,8 +99,6 @@ const head = {
             snakeHead.style.gridColumn = this.column
             break
          case "down":
-            this.prevRow = this.row
-            this.prevCol = this.column
             this.prevSpot[0] = this.row
             this.prevSpot[1] = this.column
             this.row++
@@ -110,8 +106,6 @@ const head = {
             snakeHead.style.gridColumn = this.column
             break
          case "left":
-            this.prevRow = this.row
-            this.prevCol = this.column
             this.prevSpot[0] = this.row
             this.prevSpot[1] = this.column
             this.column--
@@ -119,8 +113,6 @@ const head = {
             snakeHead.style.gridColumn = this.column
             break
          case "right":
-            this.prevRow = this.row
-            this.prevCol = this.column
             this.prevSpot[0] = this.row
             this.prevSpot[1] = this.column
             this.column++
@@ -136,7 +128,7 @@ const head = {
          this.length++
          this.updateLength()
          this.createFruit()
-         snakeBob.push(topUp.shift())
+         this.updatePosition()
          const currentFruit = document.querySelector(".fruit")
          currentFruit.remove()
       }
@@ -147,7 +139,9 @@ const head = {
    },
    updatePosition() {
       const currentPosition = `${this.row}:${this.column}`
-      positionTaken.push(currentPosition)
+      if (snakeBob.length > 1) {
+         positionTaken.push(currentPosition)
+      }
       console.log(`Bob's head is at ${currentPosition}`)
 
    },
@@ -179,7 +173,6 @@ const head = {
       const row = Math.floor(Math.random() * Number(this.gridDepth)) + 1
       const column = Math.floor(Math.random() * Number(this.gridWidth)) + 1
       const newFruit = document.createElement("div")
-      console.log(`New fruit should be at ${row}:${column}`)
       newFruit.style.gridRow = `${row}`
       newFruit.style.gridColumn = `${column}`
       newFruit.classList.add("fruit")
@@ -259,6 +252,7 @@ const snake2 = {
       snakeTwo.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
+      console.log(`snake2 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
    }
 }
 
@@ -281,20 +275,47 @@ const snake3 = {
       snakeThree.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
+      console.log(`snake3 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
    }
 }
 
-snakeBob.push(head)
-map.appendChild(snakeOne)
-map.appendChild(snakeTwo)
-map.appendChild(snakeThree)
+const snakeFour = document.createElement("div")
+snakeFour.classList.add("tail4")
+
+const snake4 = {
+   length: 5, // to be generated from the length stored in head obj
+   row: 0, // to be generated from previous piece
+   column: 0, // to be generated from previous piece
+   prevSpot: [],
+   calcPosition() {
+      const index = this.length - 1
+      this.row = snakeBob[index - 1].prevSpot[0]
+      this.column = snakeBob[index - 1].prevSpot[1]
+      console.log(`snake4 is at ${this.row}:${this.column}`)
+   },
+   moveTail() {
+      snakeFour.style.gridRow = this.row
+      snakeFour.style.gridColumn = this.column
+      this.prevSpot[0] = this.row
+      this.prevSpot[1] = this.column
+      console.log(`snake4 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
+      console.log("--------------------------------------------------")
+   }
+}
+
+snakeBob.push(head, snake1, snake2, snake3, snake4)
+map.appendChild(snakeOne, snakeTwo, snakeThree, snakeFour)
+
 
 // initialize Bob's head at start 
 head.startPosition()
 head.createFruit()
 head.moveBob()
+head.moveBob()
+head.moveBob()
+head.moveBob()
 
-const topUp = [snake1, snake2, snake3]
+
 
 
 // After loading the page, start the game and set direction. Any further keydown just changes the current direction. Need bugfixing
