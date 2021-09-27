@@ -24,7 +24,7 @@ const head = {
    length: 1,
    seconds: 00,
    minutes: 0,
-   speed: 3500, // movement speed, in milliseconds
+   speed: 500, // movement speed, in milliseconds
    speedDisplay: 1, // for external display only
    row: 0,
    column: 0,
@@ -53,6 +53,13 @@ const head = {
          }
       }, 1000)
 
+      play = setTimeout(() => {
+         head.positionSnake()
+         head.moveBob()
+         head.updatePosition()
+         playTimer()
+      }, head.speed)
+
       playTimer = () => {
          play = setTimeout(() => {
             head.positionSnake()
@@ -61,14 +68,6 @@ const head = {
             playTimer()
          }, head.speed)
       }
-      play = setTimeout(() => {
-         head.positionSnake()
-         head.moveBob()
-         head.updatePosition()
-         playTimer()
-      }, head.speed)
-
-
    },
    updateLength() {
       lengthCounter.innerHTML = this.length
@@ -141,15 +140,8 @@ const head = {
    updatePosition() {
       const currentPosition = `${this.row}:${this.column}`
       if (snakeBob.length > 1) {
-         positionTaken.push(currentPosition)
+         positionTaken.unshift(currentPosition)
       }
-      positionTaken.forEach(pos => {
-         if (pos == currentPosition) {
-            this.gameOver()
-         }
-      })
-      console.log(`Bob's head is at ${currentPosition}`)
-
    },
    gameOver() {
       alert("SUXXXX")
@@ -228,14 +220,12 @@ const snake1 = {
       const index = this.length - 1
       this.row = snakeBob[index - 1].prevSpot[0]
       this.column = snakeBob[index - 1].prevSpot[1]
-      console.log(`snake1 is at ${this.row}:${this.column}`)
    },
    moveTail() {
       snakeOne.style.gridRow = this.row
       snakeOne.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
-      console.log(`snake1 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
    }
 }
 
@@ -251,14 +241,12 @@ const snake2 = {
       const index = this.length - 1
       this.row = snakeBob[index - 1].prevSpot[0]
       this.column = snakeBob[index - 1].prevSpot[1]
-      console.log(`snake2 is at ${this.row}:${this.column}`)
    },
    moveTail() {
       snakeTwo.style.gridRow = this.row
       snakeTwo.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
-      console.log(`snake2 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
    }
 }
 
@@ -274,14 +262,12 @@ const snake3 = {
       const index = this.length - 1
       this.row = snakeBob[index - 1].prevSpot[0]
       this.column = snakeBob[index - 1].prevSpot[1]
-      console.log(`snake3 is at ${this.row}:${this.column}`)
    },
    moveTail() {
       snakeThree.style.gridRow = this.row
       snakeThree.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
-      console.log(`snake3 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
    }
 }
 
@@ -293,23 +279,21 @@ const snake4 = {
    row: 0, // to be generated from previous piece
    column: 0, // to be generated from previous piece
    prevSpot: [],
+   index: (this.length - 1),
    calcPosition() {
       const index = this.length - 1
       this.row = snakeBob[index - 1].prevSpot[0]
       this.column = snakeBob[index - 1].prevSpot[1]
-      console.log(`snake4 is at ${this.row}:${this.column}`)
    },
    moveTail() {
       snakeFour.style.gridRow = this.row
       snakeFour.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
-      console.log(`snake4 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
-      console.log("--------------------------------------------------")
       const index = this.length - 1
       const position = `${this.row}:${this.column}`
-      if (positionTaken[index] == position) {
-         positionTaken.pop()
+      if (this.index == snakeBob.length) {
+         snakeBob.push()
       }
    }
 }
@@ -326,15 +310,12 @@ const snake5 = {
       const index = this.length - 1
       this.row = snakeBob[index - 1].prevSpot[0]
       this.column = snakeBob[index - 1].prevSpot[1]
-      console.log(`snake4 is at ${this.row}:${this.column}`)
    },
    moveTail() {
       snakeFive.style.gridRow = this.row
       snakeFive.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
-      console.log(`snake5 moved, prev spot is ${this.prevSpot[0]}:${this.prevSpot[01]}`)
-      console.log("--------------------------------------------------")
    }
 }
 
@@ -349,6 +330,10 @@ map.appendChild(snakeFive)
 // initialize Bob's head at start 
 head.startPosition()
 head.createFruit()
+head.moveBob()
+head.moveBob()
+head.moveBob()
+head.moveBob()
 head.moveBob()
 
 
