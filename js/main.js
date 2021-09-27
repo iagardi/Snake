@@ -124,6 +124,12 @@ const head = {
             snakeHead.style.gridColumn = head.column
       }
       const currentPosition = `${this.row}:${this.column}`
+      positionTaken.forEach(pos => {
+         if (pos == currentPosition) {
+            this.gameOver()
+         }
+      })
+
       if (currentPosition == fruitSpot) {
          this.length++
          this.updateLength()
@@ -133,9 +139,10 @@ const head = {
          currentFruit.remove()
       }
       // check if Bob is hitting the walls
-      if (this.row < 1 || this.row > 30 || this.column < 1 || this.column > 30) {
+      if (this.row < 1 || this.row > this.gridWidth || this.column < 1 || this.column > this.gridDepth) {
          this.gameOver()
       }
+      console.log(positionTaken.join(" "))
    },
    updatePosition() {
       const currentPosition = `${this.row}:${this.column}`
@@ -279,7 +286,6 @@ const snake4 = {
    row: 0, // to be generated from previous piece
    column: 0, // to be generated from previous piece
    prevSpot: [],
-   index: (this.length - 1),
    calcPosition() {
       const index = this.length - 1
       this.row = snakeBob[index - 1].prevSpot[0]
@@ -290,32 +296,35 @@ const snake4 = {
       snakeFour.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
-      const index = this.length - 1
-      const position = `${this.row}:${this.column}`
-      if (this.index == snakeBob.length) {
-         snakeBob.push()
-      }
    }
 }
 
 const snakeFive = document.createElement("div")
 snakeFive.classList.add("tail5")
 
+let tempCounter = 0
+
 const snake5 = {
    length: 6, // to be generated from the length stored in head obj
    row: 0, // to be generated from previous piece
    column: 0, // to be generated from previous piece
    prevSpot: [],
+   index: (this.length - 1),
    calcPosition() {
       const index = this.length - 1
       this.row = snakeBob[index - 1].prevSpot[0]
       this.column = snakeBob[index - 1].prevSpot[1]
    },
    moveTail() {
+      tempCounter++
+      console.log(tempCounter)
       snakeFive.style.gridRow = this.row
       snakeFive.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
+      if (this.length == snakeBob.length && tempCounter > 6) {
+         positionTaken.pop()
+      }
    }
 }
 
@@ -331,10 +340,7 @@ map.appendChild(snakeFive)
 head.startPosition()
 head.createFruit()
 head.moveBob()
-head.moveBob()
-head.moveBob()
-head.moveBob()
-head.moveBob()
+
 
 
 
@@ -400,3 +406,25 @@ class Growsnake {
 
    }
 }
+
+// const snake5 = {
+//    length: 6, // to be generated from the length stored in head obj
+//    row: 0, // to be generated from previous piece
+//    column: 0, // to be generated from previous piece
+//    prevSpot: [],
+//    index: (this.length - 1),
+//    calcPosition() {
+//       const index = this.length - 1
+//       this.row = snakeBob[index - 1].prevSpot[0]
+//       this.column = snakeBob[index - 1].prevSpot[1]
+//    },
+//    moveTail() {
+//       snakeFive.style.gridRow = this.row
+//       snakeFive.style.gridColumn = this.column
+//       this.prevSpot[0] = this.row
+//       this.prevSpot[1] = this.column
+//       if ((Number(this.length == snakeBob.length)) && (Number(snakeBob.length > 5))) {
+//          positionTaken.pop()
+//       }
+//    }
+// }
