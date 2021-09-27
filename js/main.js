@@ -24,7 +24,7 @@ const head = {
    length: 1,
    seconds: 00,
    minutes: 0,
-   speed: 500, // movement speed, in milliseconds
+   speed: 3500, // movement speed, in milliseconds
    speedDisplay: 1, // for external display only
    row: 0,
    column: 0,
