@@ -19,8 +19,8 @@ const positionTaken = []
 let fruitSpot = ""
 
 const head = {
-   gridDepth: 20,
-   gridWidth: 20,
+   gridDepth: 15,
+   gridWidth: 15,
    length: 1,
    seconds: 00,
    minutes: 0,
@@ -46,7 +46,7 @@ const head = {
          head.seconds++
          head.updateSeconds()
          head.updateMinutes()
-         if (head.seconds % 10 == 0) {
+         if (head.seconds % 15 == 0) {
             head.speed = head.speed - 100
             head.speedDisplay++
             head.updateSpeed()
@@ -135,6 +135,7 @@ const head = {
          this.updateLength()
          this.createFruit()
          this.updatePosition()
+         newTail()
          const currentFruit = document.querySelector(".fruit")
          currentFruit.remove()
       }
@@ -217,10 +218,6 @@ head.startPosition()
 head.createFruit()
 head.moveBob()
 
-
-
-
-
 // After loading the page, start the game and set direction. Any further keydown just changes the current direction. Need bugfixing
 window.addEventListener("keydown", event => {
    switch (event.key) {
@@ -271,13 +268,19 @@ window.addEventListener("keypress", event => {
 })
 
 
+const createTail = (name) => {
+   name = document.createElement("div")
+   const id = Array.from(`tail${head.length}`).join("")
+   name.setAttribute("id", id)
+   name.classList.add(`tail`)
+   map.appendChild(name)
+}
 
 const newTail = () => {
    const name = `tail${head.length}`
    const tail = new Growsnake(name)
    snakeBob.push(tail)
-
-
+   createTail(name)
 }
 
 // constructor class to grow Bob
@@ -289,26 +292,20 @@ class Growsnake {
       this.column = snakeBob[snakeBob.length - 1].prevSpot[1];
       this.prevSpot = [];
       this.index = this.length - 1;
-      element = "";
-   }
-   create() {
-      element = document.createElement("div")
-      element.classList.add("tail1")
-      map.appendChild(element)
-      element.style.gridRow = this.row
-      element.style.gridColumn = this.column
    }
 
    calcPosition() {
-      this.row = snakeBob[index - 1].prevSpot[0]
-      this.column = snakeBob[index - 1].prevSpot[1]
+      this.row = snakeBob[this.index - 1].prevSpot[0]
+      this.column = snakeBob[this.index - 1].prevSpot[1]
    }
    moveTail() {
-      this.style.gridRow = this.row
-      this.style.gridColumn = this.column
+      const name = this.name
+      const snake = document.getElementById(name)
+      snake.style.gridRow = this.row
+      snake.style.gridColumn = this.column
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column
-      if ((Number(this.length == snakeBob.length)) && (Number(snakeBob.length > 5))) {
+      if ((Number(this.length == snakeBob.length))) {
          positionTaken.pop()
       }
    }
