@@ -19,8 +19,8 @@ const positionTaken = []
 let fruitSpot = ""
 
 const head = {
-   gridDepth: 20,
-   gridWidth: 20,
+   gridDepth: 15,
+   gridWidth: 15,
    length: 1,
    seconds: 00,
    minutes: 0,
@@ -46,7 +46,7 @@ const head = {
          head.seconds++
          head.updateSeconds()
          head.updateMinutes()
-         if (head.seconds % 10 == 0) {
+         if (head.seconds % 15 == 0) {
             head.speed = head.speed - 100
             head.speedDisplay++
             head.updateSpeed()
@@ -124,18 +124,26 @@ const head = {
             snakeHead.style.gridColumn = head.column
       }
       const currentPosition = `${this.row}:${this.column}`
+      positionTaken.forEach(pos => {
+         if (pos == currentPosition) {
+            this.gameOver()
+         }
+      })
+
       if (currentPosition == fruitSpot) {
          this.length++
          this.updateLength()
          this.createFruit()
          this.updatePosition()
+         newTail()
          const currentFruit = document.querySelector(".fruit")
          currentFruit.remove()
       }
       // check if Bob is hitting the walls
-      if (this.row < 1 || this.row > 30 || this.column < 1 || this.column > 30) {
+      if (this.row < 1 || this.row > this.gridWidth || this.column < 1 || this.column > this.gridDepth) {
          this.gameOver()
       }
+      console.log(positionTaken.join(" "))
    },
    updatePosition() {
       const currentPosition = `${this.row}:${this.column}`
@@ -205,139 +213,10 @@ const head = {
    }
 }
 
-// --------------------------------------------
-// hard coding in a few tail pieces to test movement
-
-const snakeOne = document.createElement("div")
-snakeOne.classList.add("tail")
-
-const snake1 = {
-   length: 2, // to be generated from the length stored in head obj
-   row: 0, // to be generated from previous piece
-   column: 0, // to be generated from previous piece
-   prevSpot: [], // calculated internally after movement
-   calcPosition() {
-      const index = this.length - 1
-      this.row = snakeBob[index - 1].prevSpot[0]
-      this.column = snakeBob[index - 1].prevSpot[1]
-   },
-   moveTail() {
-      snakeOne.style.gridRow = this.row
-      snakeOne.style.gridColumn = this.column
-      this.prevSpot[0] = this.row
-      this.prevSpot[1] = this.column
-   }
-}
-
-const snakeTwo = document.createElement("div")
-snakeTwo.classList.add("tail2")
-
-const snake2 = {
-   length: 3, // to be generated from the length stored in head obj
-   row: 0, // to be generated from previous piece
-   column: 0, // to be generated from previous piece
-   prevSpot: [],
-   calcPosition() {
-      const index = this.length - 1
-      this.row = snakeBob[index - 1].prevSpot[0]
-      this.column = snakeBob[index - 1].prevSpot[1]
-   },
-   moveTail() {
-      snakeTwo.style.gridRow = this.row
-      snakeTwo.style.gridColumn = this.column
-      this.prevSpot[0] = this.row
-      this.prevSpot[1] = this.column
-   }
-}
-
-const snakeThree = document.createElement("div")
-snakeThree.classList.add("tail3")
-
-const snake3 = {
-   length: 4, // to be generated from the length stored in head obj
-   row: 0, // to be generated from previous piece
-   column: 0, // to be generated from previous piece
-   prevSpot: [],
-   calcPosition() {
-      const index = this.length - 1
-      this.row = snakeBob[index - 1].prevSpot[0]
-      this.column = snakeBob[index - 1].prevSpot[1]
-   },
-   moveTail() {
-      snakeThree.style.gridRow = this.row
-      snakeThree.style.gridColumn = this.column
-      this.prevSpot[0] = this.row
-      this.prevSpot[1] = this.column
-   }
-}
-
-const snakeFour = document.createElement("div")
-snakeFour.classList.add("tail4")
-
-const snake4 = {
-   length: 5, // to be generated from the length stored in head obj
-   row: 0, // to be generated from previous piece
-   column: 0, // to be generated from previous piece
-   prevSpot: [],
-   index: (this.length - 1),
-   calcPosition() {
-      const index = this.length - 1
-      this.row = snakeBob[index - 1].prevSpot[0]
-      this.column = snakeBob[index - 1].prevSpot[1]
-   },
-   moveTail() {
-      snakeFour.style.gridRow = this.row
-      snakeFour.style.gridColumn = this.column
-      this.prevSpot[0] = this.row
-      this.prevSpot[1] = this.column
-      const index = this.length - 1
-      const position = `${this.row}:${this.column}`
-      if (this.index == snakeBob.length) {
-         snakeBob.push()
-      }
-   }
-}
-
-const snakeFive = document.createElement("div")
-snakeFive.classList.add("tail5")
-
-const snake5 = {
-   length: 6, // to be generated from the length stored in head obj
-   row: 0, // to be generated from previous piece
-   column: 0, // to be generated from previous piece
-   prevSpot: [],
-   calcPosition() {
-      const index = this.length - 1
-      this.row = snakeBob[index - 1].prevSpot[0]
-      this.column = snakeBob[index - 1].prevSpot[1]
-   },
-   moveTail() {
-      snakeFive.style.gridRow = this.row
-      snakeFive.style.gridColumn = this.column
-      this.prevSpot[0] = this.row
-      this.prevSpot[1] = this.column
-   }
-}
-
-snakeBob.push(head, snake1, snake2, snake3, snake4, snake5)
-map.appendChild(snakeOne)
-map.appendChild(snakeTwo)
-map.appendChild(snakeThree)
-map.appendChild(snakeFour)
-map.appendChild(snakeFive)
-
-
-// initialize Bob's head at start 
+snakeBob.push(head)
 head.startPosition()
 head.createFruit()
 head.moveBob()
-head.moveBob()
-head.moveBob()
-head.moveBob()
-head.moveBob()
-
-
-
 
 // After loading the page, start the game and set direction. Any further keydown just changes the current direction. Need bugfixing
 window.addEventListener("keydown", event => {
@@ -389,14 +268,45 @@ window.addEventListener("keypress", event => {
 })
 
 
+const createTail = (name) => {
+   name = document.createElement("div")
+   const id = Array.from(`tail${head.length}`).join("")
+   name.setAttribute("id", id)
+   name.classList.add(`tail`)
+   map.appendChild(name)
+}
+
+const newTail = () => {
+   const name = `tail${head.length}`
+   const tail = new Growsnake(name)
+   snakeBob.push(tail)
+   createTail(name)
+}
 
 // constructor class to grow Bob
 class Growsnake {
-   constructor(row, column, length, prevRow, prevCol) {
-      this.row = head.prevRow,
-         this.column = head.prevCol,
-         this.length = head.length
+   constructor(name, length, row, column, prevSpot, index) {
+      this.name = name;
+      this.length = head.length;
+      this.row = snakeBob[snakeBob.length - 1].prevSpot[0];
+      this.column = snakeBob[snakeBob.length - 1].prevSpot[1];
+      this.prevSpot = [];
+      this.index = this.length - 1;
+   }
 
-
+   calcPosition() {
+      this.row = snakeBob[this.index - 1].prevSpot[0]
+      this.column = snakeBob[this.index - 1].prevSpot[1]
+   }
+   moveTail() {
+      const name = this.name
+      const snake = document.getElementById(name)
+      snake.style.gridRow = this.row
+      snake.style.gridColumn = this.column
+      this.prevSpot[0] = this.row
+      this.prevSpot[1] = this.column
+      if ((Number(this.length == snakeBob.length))) {
+         positionTaken.pop()
+      }
    }
 }
