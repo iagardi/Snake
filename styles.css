@@ -11,9 +11,8 @@ body {
 }
 
 .container {
-  flex: 1;
   width: 40vw;
-  height: 60vw;
+  height: 100%;
   min-width: 320px;
   min-height: 480px;
   margin: auto;
@@ -21,12 +20,20 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 1px solid black;
 }
 .container header {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  width: 100%;
 }
 .container main {
   flex: 4;
+  border: 1px solid black;
 }
 .container footer {
   flex: 1;
@@ -39,6 +46,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 1px solid black;
 }
 
 h1 {
@@ -46,8 +54,9 @@ h1 {
 }
 
 #map {
-  width: 100%;
-  height: 60%;
+  min-width: 50vh;
+  max-width: 50vh;
+  height: 50vh;
   background-color: red;
   border: 3px solid black;
   display: grid;
