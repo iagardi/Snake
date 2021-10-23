@@ -1,4 +1,4 @@
 # Snake
-A classic Snake game using HTML, CSS-SCSS and JavaScript
+A classic Snake game built with HTML, CSS-SCSS and JavaScript
 
 
