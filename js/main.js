@@ -39,7 +39,6 @@ const head = {
       this.prevSpot[0] = this.row
       this.prevSpot[1] = this.column - 1
       this.positionSnake()
-      console.log(`Bob's head starts at ${this.row}:${this.column}`)
    },
    startGame() {
       timer = setInterval(seconds => {
@@ -143,7 +142,6 @@ const head = {
       if (this.row < 1 || this.row > this.gridWidth || this.column < 1 || this.column > this.gridDepth) {
          this.gameOver()
       }
-      console.log(positionTaken.join(" "))
    },
    updatePosition() {
       const currentPosition = `${this.row}:${this.column}`
@@ -152,7 +150,7 @@ const head = {
       }
    },
    gameOver() {
-      alert("SUXXXX")
+      alert("Game over")
       play = ""
       timer = ""
       playTimer = ""
