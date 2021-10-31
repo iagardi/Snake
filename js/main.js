@@ -4,6 +4,7 @@ const lengthCounter = document.querySelector("#length")
 const speedCounter = document.querySelector("#speed")
 const minuteCounter = document.querySelector("#timer--minutes")
 const secondsCounter = document.querySelector("#timer--seconds")
+const restartButton = document.querySelector("#restart-button")
 
 // Main, elapsed timer. Increases game speed at certain intervals
 let timer
@@ -32,6 +33,19 @@ const head = {
    prevCol: 0,
    prevSpot: [],
    direction: "",
+   reInitializeStats() {
+      this.length = 1
+      this.seconds = 00
+      this.minutes = 0
+      this.speed = 500
+      this.speedDisplay = 1
+      this.row = 0
+      this.column = 0
+      this.prevRow = 0
+      this.prevCol = 0
+      this.prevSpot = []
+      this.direction = ""
+   },
    // to get a random start position within the grid
    startPosition() {
       this.row = Math.floor(Math.random() * Number(this.gridDepth)) + 1
@@ -208,51 +222,45 @@ const head = {
       for (i = 1; i < snakeBob.length; i++) {
          snakeBob[i].moveTail()
       }
+   },
+   newGame() {
+      snakeBob.push(head)
+      this.startPosition()
+      this.createFruit()
+   },
+   restartGame() {
+      this.reInitializeStats()
+      positionTaken.length = 0
+      timer = ""
+      play = ""
+      playTimer = ""
+      while (map.firstChild) {
+         map.removeChild(map.firstChild)
+      }
    }
 }
 
-snakeBob.push(head)
-head.startPosition()
-head.createFruit()
-head.moveBob()
+head.newGame()
 
 // After loading the page, start the game and set direction. Any further keydown just changes the current direction. 
 window.addEventListener("keydown", event => {
    switch (event.key) {
       case "ArrowUp":
-         if (head.seconds == 0 && head.direction == "") {
-            head.direction = "up"
-            head.startGame()
-         } else {
-            head.direction = "up"
-         }
+         head.direction = "up"
          break
       case "ArrowDown":
-         if (head.seconds == 0 && head.direction == "") {
-            head.direction = "down"
-            head.startGame()
-         } else {
-            head.direction = "down"
-         }
+         head.direction = "down"
          break
       case "ArrowLeft":
-         if (head.seconds == 0 && head.direction == "") {
-            head.direction = "left"
-            head.startGame()
-         } else {
-            head.direction = "left"
-         }
+         head.direction = "left"
          break
       case "ArrowRight":
-         if (head.seconds == 0 && head.direction == "") {
-            head.direction = "right"
-            head.startGame()
-         } else {
-            head.direction = "right"
-         }
+         head.direction = "right"
          break
-
+      default:
+         null
    }
+   head.seconds == 00 ? head.startGame() : null
 })
 
 window.addEventListener("keypress", event => {
@@ -265,6 +273,10 @@ window.addEventListener("keypress", event => {
    }
 })
 
+restartButton.addEventListener("click", event => {
+   head.restartGame()
+   head.newGame()
+})
 
 const createTail = (name) => {
    name = document.createElement("div")
