@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-size: 16px;
+  font-size: 62.5% rem;
 }
 
 body {
@@ -22,31 +22,50 @@ body {
   align-items: center;
   border: 1px solid black;
 }
-.container header {
-  flex: 1;
+.container .header {
+  height: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-size: 1rem;
+}
+.container .map {
+  height: 50%;
+}
+.container .footer {
+  height: 25%;
+  width: 100%;
+}
+.container .footer__board {
+  height: 50%;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+  border-bottom: 1px solid black;
+}
+.container .footer__board--length, .container .footer__board--speed, .container .footer__board--time {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   border: 1px solid black;
+  width: 30%;
+  height: 45%;
+  border-radius: 30px;
+  font-size: 1.2rem;
+}
+.container .footer__buttons {
+  height: 50%;
   width: 100%;
-}
-.container main {
-  flex: 4;
-  border: 1px solid black;
-}
-.container footer {
-  flex: 1;
   display: flex;
-  width: 100%;
-}
-.container footer .board--length, .container footer .board--speed, .container footer .board--time {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid black;
+}
+.container .footer__buttons #restart {
+  padding: 15px 35px;
 }
 
 h1 {
@@ -57,8 +76,8 @@ h1 {
   min-width: 50vh;
   max-width: 50vh;
   height: 50vh;
-  background-color: red;
-  border: 3px solid black;
+  background-color: #88bd8f;
+  border: 1px solid black;
   display: grid;
   grid-template-columns: repeat(15, 1fr);
   grid-template-rows: repeat(15, 1fr);
@@ -74,8 +93,10 @@ h1 {
 }
 
 .fruit {
-  width: 100%;
-  height: 100%;
+  width: 70%;
+  height: 70%;
+  justify-self: center;
+  align-self: center;
   background-color: transparent;
   background-image: url("./images/bug.svg");
   background-size: contain;
