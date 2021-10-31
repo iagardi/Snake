@@ -216,7 +216,7 @@ head.startPosition()
 head.createFruit()
 head.moveBob()
 
-// After loading the page, start the game and set direction. Any further keydown just changes the current direction. Need bugfixing
+// After loading the page, start the game and set direction. Any further keydown just changes the current direction. 
 window.addEventListener("keydown", event => {
    switch (event.key) {
       case "ArrowUp":
