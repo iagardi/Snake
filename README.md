@@ -1,5 +1,5 @@
 # Snake
-A classic Snake game built with HTML, CSS-SCSS and JavaScript during week 5 and week 6 of the _nology course. This was an open, "build a game in JavaScript" challenge and I chose this game because I really enjoyed playing it on my Nokia in the early 2000s. 
+A classic Snake game built with HTML, CSS-SCSS and JavaScript during week 5 and week 6 of the _nology course. This was an open, "build a game in JavaScript" challenge and I chose this game because I really enjoyed playing it on my Nokia in the early 2000s. During the challenge, at every step I felt very positively challenged and as a junior developer I enjoyed every little success while building the game to its current state. 
 
 # Technologies used
 HTML5, SCSS and JavaScript ES6. 
@@ -9,10 +9,8 @@ The game was build on a grid base and starts by pressing any of the arrow keys. 
  - Game speed increases every 15 seconds by 100ms
  - Game over is triggered when the "snake" hits the wall or itself (this also applies when changing direction into itself). 
 
-
-
 # Future development plans
  - Currently the only way to start a new game is by refreshing the page, a restart button is in progress. 
- - 
+ - Need to implement a scoring system. 
 
 
